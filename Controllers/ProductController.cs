@@ -69,8 +69,7 @@ public class ProductController : Controller
                     // Data Analytical 
                     var uptime = CalculateAverageUptime(uniqueDataList);
                     var downtime = CalculateAverageDowntime(uniqueDataList);
-                    var peakUsageTimes = FindPeakUsageTimes(uniqueDataList);
-
+                    
                     return RedirectToAction("Upload");
                 }
             }
@@ -119,29 +118,3 @@ public class ProductController : Controller
         return downtimeCount ;
     }
 
-    // Peak usage times
-    
-    private List<DateTime> FindPeakUsageTimes(List<ExcelData> dataList)
-    {
-        var peakTimes = new List<DateTime>();
-
-        var groupedData = dataList.GroupBy(x => x.EventDate.Hour)
-                                  .OrderByDescending(g => g.Count())
-                                  .FirstOrDefault();
-
-        if (groupedData != null)
-        {
-            var maxCount = groupedData.Count();
-
-            foreach (var data in groupedData)
-            {
-                if (groupedData.Count(x => x.EventDate == data.EventDate) == maxCount)
-                {
-                    peakTimes.Add(data.EventDate);
-                }
-            }
-        }
-
-        return peakTimes;
-    }
-}
